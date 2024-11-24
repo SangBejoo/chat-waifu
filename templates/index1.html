@@ -1,0 +1,505 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Waifu Chat</title>
+    <link rel="icon" href="https://upload-os-bbs.hoyolab.com/upload/2024/05/13/c0ba1c717acc96bc9a187b59b97f334c_4191658278194339498.png" type="image/x-icon">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/default.min.css">
+   <link rel="stylesheet" href="../static/styles.css">
+</head>
+<body data-theme="dark">
+    <div class="app-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <h1>Waifu Chat</h1>
+                <i class="fas fa-times sidebar-exit" onclick="toggleSidebar()"></i>
+            </div>
+
+            <div class="character-profile">
+                <img id="characterImage" src="https://upload-os-bbs.hoyolab.com/upload/2022/11/23/62fe9822ae87555b2adc83b3b9a75331_1895401202972345618.png" alt="Character Image">
+                <div class="selector">
+                    <select id="characterSelect" onchange="updateCharacterProfile()">
+                        <option value="furina" data-image="https://upload-os-bbs.hoyolab.com/upload/2023/11/17/66fb73e569b6b91bd398d253749583db_8867564860876177156.png">Lady Furina</option>
+                        <option value="raiden_shogun" data-image="https://upload-os-bbs.hoyolab.com/upload/2022/02/23/c0739c8c34bae5b3ee8749ef77b9384e_5736952483423015425.png">Raiden Shogun</option>
+                        <option value="kafka" data-image="https://upload-os-bbs.hoyolab.com/upload/2023/07/11/b3664ca4b3d28f384fed6db4bf72f3ea_4887310740836853343.png">Kafka</option>
+                        <option value="nahida" data-image="https://upload-os-bbs.hoyolab.com/upload/2022/11/23/62fe9822ae87555b2adc83b3b9a75331_1895401202972345618.png">Nahida</option>
+                        <option value="hu_tao" data-image="https://upload-os-bbs.hoyolab.com/upload/2023/10/19/c1282cf04cde83330e9fc9666173791c_536919614532516805.png">Hu Tao</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="selector">
+                <label for="modelSelect">AI Model:</label>
+                <select id="modelSelect">
+                    <option value="auto">Auto (Smart Model Selection)</option>
+                    <option value="gemini">Google Gemini</option>
+                    <option value="nvidia">NVIDIA LLaMA</option>
+                    <option value="meta-llama/llama-3.2-90b-vision-instruct:free">llama-3.2-90b-vision-instruct</option>
+                    <option value="meta-llama/llama-3.2-11b-vision-instruct:free">LLaMA 3.2 11B Vision Instruct</option>
+                    <option value="meta-llama/llama-3.1-405b-instruct:free">LLaMA 3.1 405B Instruct</option>
+                    <option value="nousresearch/hermes-3-llama-3.1-405b:free">Hermes 3 LLaMA 3.1 405B</option>
+                    <option value="microsoft/phi-3-medium-128k-instruct:free">Phi 3 Medium 128K Instruct</option>
+                    <option value="liquid/lfm-40b:free">LFM 40B</option>
+                    <option value="qwen/qwen-2-7b-instruct:free">Qwen 2.7B Instruct</option>
+                    <option value="google/gemma-2-9b-it:free">Gemma 2.9B IT</option>
+                    <option value="openchat/openchat-7b:free">OpenChat 7B</option>
+                </select>
+            </div>
+
+            <div class="selector">
+                <label for="fishAudioSelect">Fish Audio API Key:</label>
+                <select id="fishAudioSelect">
+                    <option value="">Auto-select API Key</option>
+                    <option value="FISH_AUDIO_API_KEY">API Key 1</option>
+                    <option value="FISH_AUDIO_API_KEY2">API Key 2</option>
+                    <option value="FISH_AUDIO_API_KEY3">API Key 3</option>
+                    <option value="FISH_AUDIO_API_KEY4">API Key 4</option>
+                </select>
+            </div>
+
+            <footer>
+                <p>Created by Ayub Subagiya and AI</p>
+                <div class="social-links">
+                    <a href="https://github.com/SangBejoo" target="_blank"><i class="fab fa-github"></i></a>
+                    <a href="https://www.linkedin.com/in/ayub-subagiya/" target="_blank"><i class="fab fa-linkedin"></i></a>
+                </div>
+            </footer>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <div class="mobile-header">
+                <i class="fas fa-bars menu-toggle" onclick="toggleSidebar()"></i>
+                <h1>Waifu Chat</h1>
+                <i class="fas fa-cog model-selector-toggle" onclick="toggleModelSelector()"></i>
+            </div>
+
+            <div id="modelSelector" class="model-selector">
+                <i class="fas fa-times model-selector-exit" onclick="toggleModelSelector()"></i>
+                <label for="modelSelectMobile">AI Model:</label>
+                <select id="modelSelectMobile" onchange="syncModelSelection()">
+                    <option value="auto">Auto (Smart Model Selection)</option>
+                    <option value="gemini">Google Gemini</option>
+                    <option value="nvidia">NVIDIA LLaMA</option>
+                    <option value="llama_vision">LLaMA Vision</option>
+                    <option value="meta-llama/llama-3.2-11b-vision-instruct:free">LLaMA 3.2 11B Vision Instruct</option>
+                    <option value="meta-llama/llama-3.1-405b-instruct:free">LLaMA 3.1 405B Instruct</option>
+                    <option value="nousresearch/hermes-3-llama-3.1-405b:free">Hermes 3 LLaMA 3.1 405B</option>
+                    <option value="microsoft/phi-3-medium-128k-instruct:free">Phi 3 Medium 128K Instruct</option>
+                    <option value="liquid/lfm-40b:free">LFM 40B</option>
+                    <option value="qwen/qwen-2-7b-instruct:free">Qwen 2.7B Instruct</option>
+                    <option value="google/gemma-2-9b-it:free">Gemma 2.9B IT</option>
+                    <option value="openchat/openchat-7b:free">OpenChat 7B</option>
+                </select>
+            </div>
+
+            <div id="conversation" class="conversation">
+                <div id="loadingContainer" class="loading-animation-container" style="display: none;">
+                    <div class="cat">
+                        <div class="cat-body">
+                            <div class="cat-ears">
+                                <div class="cat-ear left"></div>
+                                <div class="cat-ear right"></div>
+                            </div>
+                            <div class="cat-eyes">
+                                <div class="eye left"></div>
+                                <div class="eye right"></div>
+                            </div>
+                        </div>
+                        <div class="cat-tail"></div>
+                    </div>
+                    <div class="loading-text">Generating response...</div>
+                </div>
+                
+                <div id="errorContainer" class="error-animation-container" style="display: none;">
+                    <div class="sad-cat">
+                        <div class="sad-cat-body">
+                            <div class="sad-cat-ears">
+                                <div class="sad-cat-ear left"></div>
+                                <div class="sad-cat-ear right"></div>
+                            </div>
+                            <div class="sad-cat-eyes">
+                                <div class="sad-eye left"></div>
+                                <div class="sad-eye right"></div>
+                            </div>
+                            <div class="sad-cat-mouth"></div>
+                        </div>
+                        <div class="sad-cat-tears"></div>
+                    </div>
+                    <div class="error-text">Oops! Something went wrong...</div>
+                    <button class="retry-button">Try Again</button>
+                </div>
+            </div>
+
+            <div class="input-container">
+                <div class="input-wrapper">
+                    <textarea id="userPrompt" class="prompt" placeholder="Send a message... (Press Enter to send, Shift+Enter for new line)" rows="1"></textarea>
+                    
+                    <!-- Image Preview -->
+                    <div class="image-preview" id="imagePreview">
+                        <img id="previewImg" src="" alt="Preview">
+                        <button class="remove-image" onclick="removeImage()">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+
+                    <button class="generate-btn" onclick="generateResponse()">
+                        <i class="fas fa-paper-plane"></i>
+                    </button>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Add Highlight.js JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js"></script>
+    <script>
+        hljs.highlightAll();
+    </script>
+
+    <!-- Move your script here, just before the closing </body> tag -->
+    <script>
+        // Sidebar Toggle Function
+        function toggleSidebar() {
+            const sidebar = document.querySelector('.sidebar');
+            sidebar.classList.toggle('active');
+        }
+
+        // Auto-resize textarea
+        function autoResize(textarea) {
+            textarea.style.height = 'auto';
+            textarea.style.height = textarea.scrollHeight + 'px';
+        }
+
+        // Update Character Profile Function
+        function updateCharacterProfile() {
+            const characterSelect = document.getElementById("characterSelect");
+            const characterImage = document.getElementById("characterImage");
+            const selectedOption = characterSelect.options[characterSelect.selectedIndex];
+            characterImage.src = selectedOption.getAttribute("data-image");
+        }
+
+        // Modify Generate Response Function to make image optional
+        async function generateResponse() {
+            const prompt = document.getElementById('userPrompt');
+            const promptValue = prompt.value.trim();
+            if (!promptValue) return;
+            
+            const conversation = document.getElementById('conversation');
+            const characterChoice = document.getElementById('characterSelect').value;
+            const modelChoice = document.getElementById('modelSelect').value;
+            const fishAudioChoice = document.getElementById('fishAudioSelect').value;
+            const characterImageSrc = document.getElementById('characterImage').src;
+
+            // Show Loading Container
+            const loadingContainer = document.getElementById('loadingContainer');
+            const errorContainer = document.getElementById('errorContainer');
+            
+            try {
+                loadingContainer.style.display = 'flex';
+                errorContainer.style.display = 'none';
+
+                // Display User Message
+                const userMessage = `
+                    <div class="message user">
+                        <img src="https://upload-os-bbs.hoyolab.com/upload/2024/05/13/c0ba1c717acc96bc9a187b59b97f334c_4191658278194339498.png" class="message-avatar">
+                        <div class="message-content">${promptValue}</div>
+                    </div>`;
+                conversation.insertAdjacentHTML('beforeend', userMessage);
+
+                // Clear input and scroll
+                prompt.value = '';
+                prompt.style.height = 'auto';
+                conversation.scrollTop = conversation.scrollHeight;
+
+                // Check if we're offline
+                if (!navigator.onLine) {
+                    throw new Error('You are offline. Please check your internet connection.');
+                }
+
+                // Check for character mentions
+                const mentionedCharacters = [];
+                Object.keys(CHARACTER_AVATARS).forEach(character => {
+                    if (promptValue.toLowerCase().includes(character.replace('_', ' ').toLowerCase())) {
+                        mentionedCharacters.push(character);
+                    }
+                });
+
+                const response = await fetch('/generate', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        user_prompt: promptValue,
+                        character_choice: characterChoice,
+                        model: modelChoice,
+                        fish_audio_choice: fishAudioChoice,
+                        mentioned_characters: mentionedCharacters
+                    })
+                });
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
+                const data = await response.json();
+                if (data.error) {
+                    throw new Error(data.error);
+                }
+
+                // Display AI Messages
+                if (data.responses && data.responses.length > 0) {
+                    // Handle multiple character responses
+                    data.responses.forEach(resp => {
+                        const aiMessage = `
+                            <div class="message ai">
+                                <img src="${resp.avatar || CHARACTER_AVATARS[resp.character]}" class="message-avatar">
+                                <div class="message-content">
+                                    <span class="character-name">${resp.character}</span>
+                                    ${resp.response}
+                                </div>
+                            </div>`;
+                        conversation.insertAdjacentHTML('beforeend', aiMessage);
+                    });
+                } else {
+                    // Handle single response
+                    const aiMessage = `
+                        <div class="message ai">
+                            <img src="${characterImageSrc}" class="message-avatar">
+                            <div class="message-content">
+                                ${data.response}
+                            </div>
+                        </div>`;
+                    conversation.insertAdjacentHTML('beforeend', aiMessage);
+                }
+
+            } catch (error) {
+                console.error('Error:', error);
+                errorContainer.style.display = 'flex';
+                errorContainer.querySelector('.error-text').textContent = 
+                    error.message || 'Failed to generate response. Please try again.';
+                
+                const retryButton = errorContainer.querySelector('.retry-button');
+                retryButton.onclick = () => {
+                    errorContainer.style.display = 'none';
+                    generateResponse();
+                };
+            } finally {
+                // Always hide loading container when done
+                loadingContainer.style.display = 'none';
+                conversation.scrollTop = conversation.scrollHeight;
+            }
+        }
+
+        // Toggle Model Selector Function
+        function toggleModelSelector() {
+            const modelSelector = document.getElementById('modelSelector');
+            const exitMenu = document.querySelector('.model-selector-exit');
+            modelSelector.classList.toggle('active');
+            exitMenu.classList.toggle('active');
+        }
+
+        // Sync Model Selection between desktop and mobile
+        function syncModelSelection() {
+            const modelSelect = document.getElementById('modelSelect');
+            const modelSelectMobile = document.getElementById('modelSelectMobile');
+            modelSelect.value = modelSelectMobile.value;
+        }
+
+        // Add event listeners after DOM is loaded
+        document.addEventListener('DOMContentLoaded', function() {
+            const userPrompt = document.getElementById('userPrompt');
+
+            userPrompt.addEventListener('keydown', function(e) {
+                if (e.key === 'Enter' && !e.shiftKey) {
+                    e.preventDefault();
+                    generateResponse();
+                }
+            });
+
+            userPrompt.addEventListener('input', function() {
+                autoResize(this);
+            });
+
+            // Initialize Character Profile
+            updateCharacterProfile();
+
+            // Show/Hide Image Upload based on Model Selection
+            const modelSelect = document.getElementById('modelSelect');
+            const imageUploadContainer = document.getElementById('imageUploadContainer');
+            modelSelect.addEventListener('change', function() {
+                if (modelSelect.value === 'llama_vision') {
+                    imageUploadContainer.style.display = 'block';
+                } else {
+                    imageUploadContainer.style.display = 'none';
+                }
+            });
+        });
+
+        // Add a character avatar mapping
+        const CHARACTER_AVATARS = {
+            "furina": "https://upload-os-bbs.hoyolab.com/upload/2023/11/17/66fb73e569b6b91bd398d253749583db_8867564860876177156.png",
+            "raiden_shogun": "https://upload-os-bbs.hoyolab.com/upload/2022/02/23/c0739c8c34bae5b3ee8749ef77b9384e_5736952483423015425.png",
+            "kafka": "https://upload-os-bbs.hoyolab.com/upload/2023/07/11/b3664ca4b3d28f384fed6db4bf72f3ea_4887310740836853343.png",
+            "nahida": "https://upload-os-bbs.hoyolab.com/upload/2022/11/23/62fe9822ae87555b2adc83b3b9a75331_1895401202972345618.png",
+            "hu_tao": "https://upload-os-bbs.hoyolab.com/upload/2023/10/19/c1282cf04cde83330e9fc9666173791c_536919614532516805.png"
+        };
+
+        // Modify createMessage function to handle multiple characters
+        function createMessage(content, type, characterImageSrc = '') {
+            const message = document.createElement('div');
+            message.className = `message ${type}`;
+            const time = new Date().toLocaleTimeString();
+            message.setAttribute('data-time', time);
+            
+            if (type === 'ai') {
+                // Extract model info if present
+                const modelMatch = content.match(/\[Using model: (.*?)\]/);
+                const modelInfo = modelMatch ? modelMatch[1] : '';
+                content = content.replace(/\[Using model: .*?\]\n\n/, '');
+                
+                // Parse multiple character responses
+                const responses = content.split('\n\n').filter(r => r.trim());
+                responses.forEach(response => {
+                    const [character, text] = response.split(': ');
+                    const characterKey = character.toLowerCase().replace(' ', '_');
+                    const avatar = CHARACTER_AVATARS[characterKey] || characterImageSrc;
+                    
+                    const responseDiv = document.createElement('div');
+                    responseDiv.className = 'character-response';
+                    responseDiv.innerHTML = `
+                        <img src="${avatar}" alt="${character}" class="message-avatar">
+                        <div class="message-content">
+                            <span class="character-name">${character}</span>
+                            ${text}
+                        </div>
+                    `;
+                    message.appendChild(responseDiv);
+                });
+                
+                if (modelInfo) {
+                    message.appendChild(updateModelStatus(modelInfo));
+                }
+            } else {
+                message.innerHTML = `
+                    <img src="https://upload-os-bbs.hoyolab.com/upload/2024/05/13/c0ba1c717acc96bc9a187b59b97f334c_4191658278194339498.png" class="message-avatar">
+                    <div class="message-content">${content}</div>
+                `;
+            }
+            
+            return message;
+        }
+
+        // Remove Selected Image
+        function removeImage() {
+            document.getElementById('imageInput').value = '';
+            const preview = document.getElementById('imagePreview');
+            preview.classList.remove('show');
+        }
+
+        // Add this function to handle model status display
+        function updateModelStatus(modelInfo) {
+            const modelStatus = document.createElement('div');
+            modelStatus.className = 'model-status';
+            modelStatus.innerHTML = `<small>Using: ${modelInfo}</small>`;
+            return modelStatus;
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const generateButton = document.getElementById('generateButton');
+            const chatBox = document.getElementById('chatBox');
+            const loadingAvatar = document.getElementById('loadingAvatar');
+            const typingIndicator = document.getElementById('typingIndicator');
+            const modelSelector = document.getElementById('modelSelector'); // Ensure this element exists
+
+            if (generateButton) {
+                generateButton.addEventListener('click', async () => {
+                    // ...existing code to gather user input...
+
+                    try {
+                        const response = await fetch('/generate', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/x-www-form-urlencoded',
+                            },
+                            body: new URLSearchParams({
+                                'user_prompt': userPrompt,
+                                'character_choice': characterChoice,
+                                'custom_template': customTemplate,
+                                'model': selectedModel,
+                                'fish_audio_choice': fishAudioChoice,
+                                'no_audio': noAudio
+                            })
+                        });
+
+                        const data = await response.json();
+
+                        if (data.responses) {
+                            // Handle multiple character responses
+                            data.responses.forEach((resp, index) => {
+                                displayMessage(resp.character, resp.response);
+                                // Removed audio playback since audio players are deleted
+                                // if (data.audio_urls[index]) {
+                                //     playAudio(data.audio_urls[index]);
+                                // }
+                            });
+                        } else if (data.response) {
+                            // Handle single response
+                            displayMessage(characterChoice, data.response);
+                            // Removed audio playback since audio players are deleted
+                            // if (data.audio_url) {
+                                //     playAudio(data.audio_url);
+                                // }
+                        }
+
+                        // Hide loading indicators
+                        hideLoading();
+
+                    } catch (error) {
+                        console.error('Error:', error);
+                        alert('There was an error generating the response.');
+                        hideLoading();
+                    }
+                });
+            } else {
+                console.warn('Generate button not found.');
+            }
+
+            function displayMessage(character, message) {
+                const messageElement = document.createElement('div');
+                messageElement.classList.add('message', character === 'user' ? 'user' : 'ai');
+                messageElement.innerHTML = `<strong class="character-name">${character}:</strong> <p>${message}</p>`; // Updated to wrap message in <p>
+                chatBox.appendChild(messageElement);
+                chatBox.scrollTop = chatBox.scrollHeight;
+            }
+
+            // Removed playAudio function since audio playback is not needed
+            /*
+            function playAudio(url) {
+                const audio = new Audio(url);
+                audio.play();
+            }
+            */
+
+            function hideLoading() {
+                if (loadingAvatar) {
+                    loadingAvatar.style.display = 'none';
+                }
+                if (typingIndicator) {
+                    typingIndicator.style.display = 'none';
+                }
+            }
+
+            // ...existing code...
+        });
+
+        // ...existing code...
+    </script>
+</body>
+</html>
+
