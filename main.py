@@ -665,7 +665,7 @@ def fetch_response(prompt, character_template, history, model="gemini", image_ur
         elif model == "nvidia":
             # Simplify NVIDIA API call
             completion = nvidia_client.chat.completions.create(
-                model="meta/llama3-70b-instruct",
+                model="meta-llama/llama-3.2-90b-vision-instruct:free",
                 messages=[{"role": "user", "content": full_prompt}],
                 temperature=0.5,
                 max_tokens=500,
